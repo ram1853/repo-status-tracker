@@ -1,0 +1,21 @@
+<<<<<<< HEAD
+# Maven build output
+/target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Terraform local files
+.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+=======
+-ed .DS_Store
+**/.DS_Store
+>>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
