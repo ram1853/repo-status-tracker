@@ -19,8 +19,8 @@ jobs:
           working-directory: repo-registration
 
     steps:
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v4
+        - name: Login to Amazon ECR (private)
+          uses: aws-actions/amazon-ecr-login@v2
 
         - name: Login to Public ECR
           run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
