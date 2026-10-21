@@ -19,7 +19,10 @@ jobs:
           working-directory: repo-registration
 
     steps:
-      - uses: actions/checkout@v4
+        - name: Login to Public ECR
+          run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+        
+        - uses: actions/checkout@v4
 
-      - name: Build docker image
-        run: ./build-docker-image.sh
+        - name: Build docker image
+          run: ./build-docker-image.sh
