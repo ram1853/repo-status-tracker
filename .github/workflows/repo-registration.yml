@@ -13,10 +13,13 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    
+    defaults:
+        run:
+          working-directory: repo-registration
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Build docker image
-        working-directory: repo-registration/**
         run: ./build-docker-image.sh
