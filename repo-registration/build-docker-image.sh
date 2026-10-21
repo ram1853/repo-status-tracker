@@ -1,19 +1,9 @@
 #!/bin/bash
 
-<<<<<<< HEAD
-=======
-echo "Start maven build"
-
-./mvnw clean package -Dmaven.test.skip=true
-
-echo "Maven build completed"
-
->>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
 VERSION=1.0.0
 
 echo "Start docker build"
 
-<<<<<<< HEAD
 # Problem: When docker pulls the graalvm native image, it pulls the variant based on
 # your host machine (here macbook - so pulls ARM64 variant).
 # But AWS Lambda runs on AMD64 architecture - hence the docker image built here in my
@@ -30,8 +20,5 @@ echo "Start docker build"
 # machine and if they push their image, it won't work on lambda as it is in arm64 now)
 
 docker build --provenance=false -t repo-register:${VERSION} .
-=======
-docker buildx build --platform linux/amd64 --provenance=false -t repo-register:${VERSION} .
->>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
 
 echo "Docker image built"

@@ -4,10 +4,6 @@ import com.repo.registration.common.dto.request.RegistrationRequest;
 import com.repo.registration.repository.IRegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-<<<<<<< HEAD
-=======
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
->>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClient;
@@ -17,10 +13,6 @@ import java.net.URI;
 import java.util.logging.Logger;
 
 @Repository
-<<<<<<< HEAD
-=======
-@ConditionalOnProperty(name = "benchmark.test", havingValue = "false")
->>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
 public class RegistrationRepositoryImpl implements IRegistrationRepository {
 
     private final Logger LOGGER = Logger.getLogger(RegistrationRepositoryImpl.class.getName());

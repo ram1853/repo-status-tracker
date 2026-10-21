@@ -13,11 +13,4 @@ server:
 github:
   host: api.github.com
   scheme: https
-<<<<<<< HEAD
   port: 443
-=======
-  port: 443
-
-benchmark:
-  test: false
->>>>>>> a19b37bc30b633154055f31fc4209a12b45f4a92
