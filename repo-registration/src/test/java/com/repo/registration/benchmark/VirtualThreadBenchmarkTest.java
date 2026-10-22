@@ -1,5 +1,6 @@
 package com.repo.registration.benchmark;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("benchmark")
+@Disabled("This is disabled so it doesn't run during build. Remove this annotation, when you want to perform the benchmark test.")
 public class VirtualThreadBenchmarkTest {
 
     private static final int BENCHMARK_DURATION_MS = 120_000; // 2 minutes - adjust as needed

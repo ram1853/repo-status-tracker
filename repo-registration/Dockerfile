@@ -6,7 +6,7 @@ COPY src ./src
 COPY mvnw pom.xml ./
 COPY .mvn ./.mvn
 
-RUN ./mvnw native:compile -Pnative -Dmaven.test.skip=true
+RUN ./mvnw native:compile -Pnative
 
 FROM gcr.io/distroless/base-debian13
 
