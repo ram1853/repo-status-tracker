@@ -64,4 +64,4 @@ jobs:
             -w /workspace \
             -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-            hashicorp/terraform:latest apply -var='image_tag=${IMAGE_TAG}' -auto-approve
+            hashicorp/terraform:latest apply -var="image_tag=${IMAGE_TAG}" -auto-approve
