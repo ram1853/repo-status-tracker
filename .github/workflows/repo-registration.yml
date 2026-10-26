@@ -3,8 +3,7 @@ name: Build and Deploy to AWS
 on:
   push:
     branches: [ "feature/*" ]
-    #paths:
-     # - "repo-registration/**"
+    paths: ["repo-registration/**"]
 
 jobs:
   build_deploy:
