@@ -3,6 +3,10 @@ variable "function_name" {
   default = "repo-registrar"
 }
 
+variable "image_tag" {
+  type = string
+}
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_partition" "current" {}
@@ -72,7 +76,7 @@ resource "aws_lambda_function" "repo-registrar" {
   role              = aws_iam_role.repo-registrar-role.arn
   timeout           = 10
   package_type      = "Image"
-  image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-register:1.0.0"
+  image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-register:${var.image_tag}"
   architectures     = ["arm64"]
 
   environment {
