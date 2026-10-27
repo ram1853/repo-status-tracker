@@ -2,7 +2,7 @@ name: Build and Deploy to AWS
 
 on:
   push:
-    branches: [ "feature/*" ]
+    branches: [ "develop" ]
     paths: ["repo-registration/**"]
 
 jobs:
@@ -41,6 +41,9 @@ jobs:
 
         # Working solution - Change Lambda Architecture to ARM64 (if other devs have a windows/linux
         # machine and if they push their image, it won't work on lambda as it is in arm64 now)
+
+        # Permanent solution - The docker image is built on github runner (which uses ubuntu), hence the
+        # Lambda architecture is used as x86_64
 
         - name: Build and push docker image to AWS ECR
           run: |
