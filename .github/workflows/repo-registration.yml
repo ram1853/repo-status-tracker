@@ -1,0 +1,69 @@
+name: Build and Deploy to AWS
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: ["repo-registration/**"]
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      IMAGE_TAG: ${{ github.sha }}
+      AWS_ACCOUNT_ID: 545009866715
+      AWS_REGION: eu-north-1
+    
+    defaults:
+        run:
+          working-directory: repo-registration
+
+    steps:
+        - uses: actions/checkout@v4
+
+        # Below is needed to pull the Lambda Web Adapter from public ECR, without this we hit rate limit error (and this image is available in us-east-1 only)
+        - name: Login to Public ECR
+          run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+        # Problem: When docker pulls the graalvm native image, it pulls the variant based on
+        # your host machine (here macbook - so pulls ARM64 variant).
+        # But AWS Lambda runs on AMD64 architecture - hence the docker image built here in my
+        # mac won't work when deployed to Lambda.
+        # Same problem even if you build the executable locally (outside of lambda) - native
+        # executable built on mac architecture won't work in lambda.
+
+        # Workaround - use '--platform linux/amd64' flag, so docker pulls the amd64 variant
+        # of the docker image - but your mac has to emulate this and the build time (particularly
+        # for native compilation) was taking forever (around 30 minutes - I terminated the build,
+        # as I feel it's not feasible for development)
+
+        # Working solution - Change Lambda Architecture to ARM64 (if other devs have a windows/linux
+        # machine and if they push their image, it won't work on lambda as it is in arm64 now)
+
+        # Permanent solution - The docker image is built on github runner (which uses ubuntu), hence the
+        # Lambda architecture is used as x86_64
+
+        - name: Build and push docker image to AWS ECR
+          run: |
+           aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+           docker build --provenance=false -t repo-register:${IMAGE_TAG} .
+           docker tag repo-register:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-register:${IMAGE_TAG}
+           docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-register:${IMAGE_TAG}
+        
+        - name: Provision infra
+          run: |
+            docker run --rm \
+            -v "$(pwd)/infra:/workspace" \
+            -w /workspace \
+            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            hashicorp/terraform:latest init
+
+            docker run --rm \
+            -v "$(pwd)/infra:/workspace" \
+            -w /workspace \
+            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            hashicorp/terraform:latest apply -var="image_tag=${IMAGE_TAG}" -auto-approve
