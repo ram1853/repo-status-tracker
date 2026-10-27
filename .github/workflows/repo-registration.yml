@@ -48,9 +48,9 @@ jobs:
         - name: Build and push docker image to AWS ECR
           run: |
            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-           docker build --provenance=false -t repo-register:${IMAGE_TAG} .
-           docker tag repo-register:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-register:${IMAGE_TAG}
-           docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-register:${IMAGE_TAG}
+           docker build --provenance=false -t repo-registration:${IMAGE_TAG} .
+           docker tag repo-registration:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-registration:${IMAGE_TAG}
+           docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-registration:${IMAGE_TAG}
         
         - name: Provision infra
           run: |
