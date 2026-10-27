@@ -2,7 +2,7 @@ name: Provision API
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
     paths: ["common-infra/**"]
 
 jobs:
