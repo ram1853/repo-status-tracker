@@ -1,6 +1,6 @@
 variable "function_name" {
   type    = string
-  default = "repo-registrar"
+  default = "repo-registration"
 }
 
 variable "image_tag" {
@@ -76,7 +76,7 @@ resource "aws_lambda_function" "repo-registrar" {
   role              = aws_iam_role.repo-registrar-role.arn
   timeout           = 10
   package_type      = "Image"
-  image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-register:${var.image_tag}"
+  image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-registration:${var.image_tag}"
   architectures     = ["x86_64"]
 
   environment {
