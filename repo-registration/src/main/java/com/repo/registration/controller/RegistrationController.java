@@ -33,7 +33,11 @@ public class RegistrationController {
         int statusCode = registrationService.registerWebHookForRepo(registrationRequest, owner, repo, token);
 
         if(statusCode == HttpStatus.CREATED.value()) {
-            return ResponseEntity.ok(new RegistrationResponse("Repo successfully registered"));
+            if(registrationService.saveRegistrationDetail(registrationRequest, owner, repo)){
+                return ResponseEntity.ok(new RegistrationResponse("Repo successfully registered"));
+            }
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS)
+                    .body(new RegistrationResponse("Repo registered, but state is not saved - contact Admin to reconcile state"));
         }
         return ResponseEntity.status(HttpStatusCode.valueOf(statusCode))
                 .body(new RegistrationResponse("Repo registration failed"));

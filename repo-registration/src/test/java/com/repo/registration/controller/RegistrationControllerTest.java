@@ -24,10 +24,12 @@ class RegistrationControllerTest {
     private RegistrationController registrationController;
 
     @Test
-    void registerWebHookForRepo_withSuccessfulRegistration_shouldReturnOkResponse(){
+    void registerWebHookForRepo_withSuccessfulRegistrationAndSavedState_shouldReturnOkResponse(){
         //Arrange
         Mockito.when(registrationService.registerWebHookForRepo(Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any())).thenReturn(HttpStatus.CREATED.value());
+        Mockito.when(registrationService.saveRegistrationDetail(Mockito.any(), Mockito.any(),
+                Mockito.any())).thenReturn(true);
 
         //Act
         ResponseEntity<RegistrationResponse> response = registrationController.registerWebHookForRepo(Mockito.any(), Mockito.any(),
@@ -38,6 +40,25 @@ class RegistrationControllerTest {
                 Mockito.any(), Mockito.any());
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().message(), is("Repo successfully registered"));
+    }
+
+    @Test
+    void registerWebHookForRepo_withSuccessfulRegistrationAndUnsavedState_shouldReturnPartialSuccessResponse(){
+        //Arrange
+        Mockito.when(registrationService.registerWebHookForRepo(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any())).thenReturn(HttpStatus.CREATED.value());
+        Mockito.when(registrationService.saveRegistrationDetail(Mockito.any(), Mockito.any(),
+                Mockito.any())).thenReturn(false);
+
+        //Act
+        ResponseEntity<RegistrationResponse> response = registrationController.registerWebHookForRepo(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
+
+        //Assert
+        Mockito.verify(registrationService, Mockito.times(1)).registerWebHookForRepo(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
+        assertThat(response.getStatusCode(), is(HttpStatus.MULTI_STATUS));
+        assertThat(response.getBody().message(), is("Repo registered, but state is not saved - contact Admin to reconcile state"));
     }
 
     @Test

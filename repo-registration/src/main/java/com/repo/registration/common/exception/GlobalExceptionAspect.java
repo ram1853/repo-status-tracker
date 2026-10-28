@@ -1,4 +1,4 @@
-package com.repo.registration.common.aspect;
+package com.repo.registration.common.exception;
 
 import com.repo.registration.common.dto.response.RegistrationResponse;
 import org.springframework.http.HttpStatus;
