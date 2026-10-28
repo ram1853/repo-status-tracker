@@ -73,7 +73,7 @@ public class RegistrationRepositoryImpl implements IRegistrationRepository {
     public boolean saveRegistrationDetail(RegistrationDetail registrationDetail) {
         try {
             DynamoDbTable<RegistrationDetail> table = dynamoDbEnhancedClient
-                    .table(Constants.REGISTRATION_DETAIL_TABLE, TableSchema.fromBean(RegistrationDetail.class));
+                    .table(Constants.REGISTRATION_DETAIL_TABLE, RegistrationDetail.REGISTRATION_DETAIL_TABLE_SCHEMA);
             table.putItem(registrationDetail);
             return true;
         } catch (DynamoDbException e) {

@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.BeanTableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 import java.net.URI;
 import java.util.List;
@@ -72,7 +72,7 @@ class RegistrationRepositoryImplTest {
     void saveRegistrationDetail_withSuccessfulSave_shouldReturnTrue() {
         //Arrange
         DynamoDbTable<RegistrationDetail> table = Mockito.mock(DynamoDbTable.class);
-        Mockito.when(dynamoDbEnhancedClient.table(Mockito.any(String.class), Mockito.any(BeanTableSchema.class))).thenReturn(table);
+        Mockito.when(dynamoDbEnhancedClient.table(Mockito.any(String.class), Mockito.any(TableSchema.class))).thenReturn(table);
 
         //Act
         boolean result = registrationRepository.saveRegistrationDetail(Mockito.mock(RegistrationDetail.class));
