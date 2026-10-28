@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_policy" "cloudwatch-policy" {
-  name = "repo-registrar-cloudwatch-policy"
+  name = "repo-registration-cloudwatch-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -52,6 +52,20 @@ resource "aws_iam_policy" "cloudwatch-policy" {
   })
 }
 
+resource "aws_iam_policy" "dynamodb-policy" {
+  name = "repo-registration-dynamodb-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+        {
+            Action  = ["dynamodb:PutItem"]
+            Effect   = "Allow"
+            Resource = [aws_dynamodb_table.registration-detail-table.arn]
+        }
+    ]
+  })
+}
+
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -62,13 +76,18 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 # IAM Role that will be assumed by Lambda
 resource "aws_iam_role" "repo-registrar-role" {
-  name               = "repo-registrar-role"
+  name               = "repo-registration-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "attach-cloudwatch-policy" {
   role       = aws_iam_role.repo-registrar-role.name
   policy_arn = aws_iam_policy.cloudwatch-policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach-dynamodb-policy" {
+  role       = aws_iam_role.repo-registrar-role.name
+  policy_arn = aws_iam_policy.dynamodb-policy.arn
 }
 
 resource "aws_lambda_function" "repo-registrar" {
