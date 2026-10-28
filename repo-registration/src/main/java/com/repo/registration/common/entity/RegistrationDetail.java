@@ -1,8 +1,8 @@
 package com.repo.registration.common.entity;
 
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
 import java.util.List;
 
@@ -21,9 +21,14 @@ import java.util.List;
  *   - Spring beans → Spring AOT registers them automatically
  *   - @DynamoDbBean POJOs → only the AWS SDK uses them via reflection, Spring AOT doesn't know about them, so you have to register them yourself
  *   - used reflect-config.json for this
+ *
+ *   -> But the above approach using reflect-config.json or the annotation way did not work.
+ *   Hence, changed the entity definition from the DynamoDbBean way to the below static table
+ *   schema way -> so all the methods are resolved at compile time itself (no reflection needed,
+ *   and it works well with GraalVM)
  */
 
-@DynamoDbBean
+
 public class RegistrationDetail {
 
     private String owner;
@@ -32,7 +37,28 @@ public class RegistrationDetail {
     private List<String> events;
     private String createdAt;
 
-    @DynamoDbPartitionKey
+    public static final TableSchema<RegistrationDetail> REGISTRATION_DETAIL_TABLE_SCHEMA =
+            TableSchema.builder(RegistrationDetail.class)
+                    .newItemSupplier(RegistrationDetail::new)
+                    .addAttribute(String.class, a -> a.name("owner")
+                            .getter(RegistrationDetail::getOwner)
+                            .setter(RegistrationDetail::setOwner)
+                            .tags(StaticAttributeTags.primaryPartitionKey()))
+                    .addAttribute(String.class, a -> a.name("repo")
+                            .getter(RegistrationDetail::getRepo)
+                            .setter(RegistrationDetail::setRepo)
+                            .tags(StaticAttributeTags.primarySortKey()))
+                    .addAttribute(String.class, a -> a.name("eventUrl")
+                            .getter(RegistrationDetail::getEventUrl)
+                            .setter(RegistrationDetail::setEventUrl))
+                    .addAttribute(EnhancedType.listOf(String.class), a -> a.name("events")
+                            .getter(RegistrationDetail::getEvents)
+                            .setter(RegistrationDetail::setEvents))
+                    .addAttribute(String.class, a -> a.name("createdAt")
+                            .getter(RegistrationDetail::getCreatedAt)
+                            .setter(RegistrationDetail::setCreatedAt))
+                    .build();
+
     public String getOwner() {
         return owner;
     }
@@ -41,7 +67,6 @@ public class RegistrationDetail {
         this.owner = owner;
     }
 
-    @DynamoDbSortKey
     public String getRepo() {
         return repo;
     }
