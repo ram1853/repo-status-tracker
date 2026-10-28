@@ -2,6 +2,7 @@ package com.repo.registration.repository.impl;
 
 import com.repo.registration.common.dto.request.RegistrationConfig;
 import com.repo.registration.common.dto.request.RegistrationRequest;
+import com.repo.registration.common.entity.RegistrationDetail;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.BeanTableSchema;
 
 import java.net.URI;
 import java.util.List;
@@ -33,6 +37,9 @@ class RegistrationRepositoryImplTest {
 
     @Mock
     private RestClient.ResponseSpec responseSpec;
+
+    @Mock
+    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
     @InjectMocks
     private RegistrationRepositoryImpl registrationRepository;
@@ -59,5 +66,19 @@ class RegistrationRepositoryImplTest {
 
         // Assert
         assertThat(status, is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    void saveRegistrationDetail_withSuccessfulSave_shouldReturnTrue() {
+        //Arrange
+        DynamoDbTable<RegistrationDetail> table = Mockito.mock(DynamoDbTable.class);
+        Mockito.when(dynamoDbEnhancedClient.table(Mockito.any(String.class), Mockito.any(BeanTableSchema.class))).thenReturn(table);
+
+        //Act
+        boolean result = registrationRepository.saveRegistrationDetail(Mockito.mock(RegistrationDetail.class));
+
+        //Assert
+        Mockito.verify(table, Mockito.times(1)).putItem(Mockito.any(RegistrationDetail.class));
+        assertThat(result, is(true));
     }
 }

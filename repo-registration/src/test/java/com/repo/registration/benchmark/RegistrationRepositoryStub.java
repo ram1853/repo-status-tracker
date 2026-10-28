@@ -1,6 +1,7 @@
 package com.repo.registration.benchmark;
 
 import com.repo.registration.common.dto.request.RegistrationRequest;
+import com.repo.registration.common.entity.RegistrationDetail;
 import com.repo.registration.repository.IRegistrationRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -28,5 +29,10 @@ public class RegistrationRepositoryStub implements IRegistrationRepository {
             Thread.currentThread().interrupt();
         }
         return 201;
+    }
+
+    @Override
+    public boolean saveRegistrationDetail(RegistrationDetail registrationDetail) {
+        return false;
     }
 }
