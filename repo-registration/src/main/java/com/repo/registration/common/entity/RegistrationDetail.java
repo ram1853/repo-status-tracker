@@ -1,6 +1,5 @@
 package com.repo.registration.common.entity;
 
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
@@ -21,10 +20,10 @@ import java.util.List;
  *
  *   - Spring beans → Spring AOT registers them automatically
  *   - @DynamoDbBean POJOs → only the AWS SDK uses them via reflection, Spring AOT doesn't know about them, so you have to register them yourself
+ *   - used reflect-config.json for this
  */
 
 @DynamoDbBean
-@RegisterReflectionForBinding(RegistrationDetail.class)
 public class RegistrationDetail {
 
     private String owner;

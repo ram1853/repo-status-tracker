@@ -33,6 +33,6 @@ public class GlobalExceptionAspect {
     public ResponseEntity<RegistrationResponse> exception(Exception ex){
         LOGGER.info("GlobalExceptionAspect:exception, ex: "+ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RegistrationResponse(ex.getMessage()));
+                .body(new RegistrationResponse("Repo registration failed"));
     }
 }
