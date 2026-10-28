@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_apigatewayv2_api" "http_api" {
-  name          = "repo-status-tracker-api-1853"
+  name          = "repo-status-tracker-api"
   protocol_type = "HTTP"
 }
 
@@ -11,7 +11,7 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   integration_type      = "AWS_PROXY"
   description           = "Integration with Backend Lambda"
   integration_method    = "POST"
-  integration_uri       = "arn:aws:lambda:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:function:repo-registrar"
+  integration_uri       = "arn:aws:lambda:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:function:repo-registration"
 }
 
 resource "aws_apigatewayv2_route" "health" {
