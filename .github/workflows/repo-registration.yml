@@ -23,34 +23,23 @@ jobs:
     steps:
         - uses: actions/checkout@v4
 
-        # Below is needed to pull the Lambda Web Adapter from public ECR, without this we hit rate limit error (and this image is available in us-east-1 only)
-        - name: Login to Public ECR
-          run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-
-        # Problem: When docker pulls the graalvm native image, it pulls the variant based on
-        # your host machine (here macbook - so pulls ARM64 variant).
-        # But AWS Lambda runs on AMD64 architecture - hence the docker image built here in my
-        # mac won't work when deployed to Lambda.
-        # Same problem even if you build the executable locally (outside of lambda) - native
-        # executable built on mac architecture won't work in lambda.
-
-        # Workaround - use '--platform linux/amd64' flag, so docker pulls the amd64 variant
-        # of the docker image - but your mac has to emulate this and the build time (particularly
-        # for native compilation) was taking forever (around 30 minutes - I terminated the build,
-        # as I feel it's not feasible for development)
-
-        # Working solution - Change Lambda Architecture to ARM64 (if other devs have a windows/linux
-        # machine and if they push their image, it won't work on lambda as it is in arm64 now)
-
-        # Permanent solution - The docker image is built on github runner (which uses ubuntu), hence the
-        # Lambda architecture is used as x86_64
-
-        - name: Build and push docker image to AWS ECR
+        - name: Build native binary
           run: |
-           aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-           docker build --provenance=false -t repo-registration:${IMAGE_TAG} .
-           docker tag repo-registration:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-registration:${IMAGE_TAG}
-           docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/repo-registration:${IMAGE_TAG}
+           docker run --rm \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            ghcr.io/graalvm/graalvm-community:25 \
+            ./mvnw native:compile -Pnative
+        
+        - name: Prepare deployment artifact
+          run: |
+           mkdir -p lambda-package
+           cp target/repo-registration lambda-package/repo-registration
+           cp bootstrap lambda-package/bootstrap
+           cd lambda-package && zip -j function.zip bootstrap repo-registration
+
+        - name: upload deployment artifact to s3
+          run: aws s3 cp lambda-package/function.zip s3://repo-status-tracker-1853/lambda/repo-registration-${IMAGE_TAG}.zip
         
         - name: Provision infra
           run: |
