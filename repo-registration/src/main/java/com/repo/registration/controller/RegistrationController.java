@@ -27,7 +27,7 @@ public class RegistrationController {
     @PostMapping
     public ResponseEntity<RegistrationResponse> registerWebHookForRepo(@RequestBody RegistrationRequest registrationRequest, @RequestHeader String owner,
                                                                        @RequestHeader String repo, @RequestHeader("Authorization") String token){
-        LOGGER.info("RegistrationController:registerWebHookForRepo, registrationRequest: "+ registrationRequest
+        LOGGER.info("registerWebHookForRepo, registrationRequest: "+ registrationRequest
         + ", owner: "+ owner+", repo: "+repo);
 
         int statusCode = registrationService.registerWebHookForRepo(registrationRequest, owner, repo, token);
