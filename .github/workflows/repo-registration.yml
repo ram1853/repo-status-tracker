@@ -36,7 +36,7 @@ jobs:
            mkdir -p lambda-package
            cp target/repo-registration lambda-package/repo-registration
            cp bootstrap lambda-package/bootstrap
-           cd lambda-package && zip -j function.zip bootstrap repo-registration
+           cd lambda-package && chmod +x bootstrap && zip function.zip bootstrap repo-registration
 
         - name: upload deployment artifact to s3
           run: aws s3 cp lambda-package/function.zip s3://repo-status-tracker-1853/lambda/repo-registration-${IMAGE_TAG}.zip

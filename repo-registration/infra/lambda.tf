@@ -102,7 +102,7 @@ resource "aws_lambda_function" "repo-registrar" {
   architectures     = ["x86_64"]
 
   layers = [
-      "arn:aws:lambda:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:layer:LambdaAdapterLayerX86:24"
+      "arn:aws:lambda:${data.aws_region.current.region}:753240598075:layer:LambdaAdapterLayerX86:24"
     ]
 
   environment {
