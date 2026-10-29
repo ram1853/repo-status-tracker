@@ -94,6 +94,7 @@ resource "aws_lambda_function" "repo-registrar" {
   function_name     = var.function_name
   role              = aws_iam_role.repo-registrar-role.arn
   timeout           = 10
+  memory_size       = 512 
   package_type      = "Zip"
   s3_bucket         = "repo-status-tracker-1853"
   s3_key            = "lambda/repo-registration-${var.image_tag}.zip"
