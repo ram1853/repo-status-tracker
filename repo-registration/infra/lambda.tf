@@ -94,10 +94,16 @@ resource "aws_lambda_function" "repo-registrar" {
   function_name     = var.function_name
   role              = aws_iam_role.repo-registrar-role.arn
   timeout           = 10
-  #memory_size       = 512
-  package_type      = "Image"
-  image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-registration:${var.image_tag}"
+  package_type      = "Zip"
+  s3_bucket         = "repo-status-tracker-1853"
+  s3_key            = "lambda/repo-registration-${var.image_tag}.zip"
+  runtime           = "provided.al2023"
+  handler           = "bootstrap" 
   architectures     = ["x86_64"]
+
+  layers = [
+      "arn:aws:lambda:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:layer:LambdaAdapterLayerX86:24"
+    ]
 
   environment {
     variables = {
