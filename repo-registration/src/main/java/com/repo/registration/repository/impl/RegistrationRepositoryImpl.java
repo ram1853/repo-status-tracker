@@ -12,7 +12,6 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
 import java.net.URI;
@@ -45,7 +44,7 @@ public class RegistrationRepositoryImpl implements IRegistrationRepository {
     @Override
     public int registerWebHookForRepo(RegistrationRequest registrationRequest, String owner, String repo,
                                                  String token) {
-        LOGGER.info("RegistrationRepositoryImpl:registerWebHookForRepo, calling github webhook API");
+        LOGGER.info("registerWebHookForRepo, calling github webhook API");
 
         URI uri = UriComponentsBuilder.newInstance().scheme(githubScheme)
                 .host(githubHost)
@@ -65,16 +64,18 @@ public class RegistrationRepositoryImpl implements IRegistrationRepository {
                 .retrieve()
                 .toBodilessEntity();
 
-        LOGGER.info("RegistrationRepositoryImpl:registerWebHookForRepo, response "+ response.getStatusCode());
+        LOGGER.info("registerWebHookForRepo, response "+ response.getStatusCode());
         return response.getStatusCode().value();
     }
 
     @Override
     public boolean saveRegistrationDetail(RegistrationDetail registrationDetail) {
         try {
+            LOGGER.info("saveRegistrationDetail, saving registrationDetail to Dynamo: "+registrationDetail);
             DynamoDbTable<RegistrationDetail> table = dynamoDbEnhancedClient
                     .table(Constants.REGISTRATION_DETAIL_TABLE, RegistrationDetail.REGISTRATION_DETAIL_TABLE_SCHEMA);
             table.putItem(registrationDetail);
+            LOGGER.info("saveRegistrationDetail, Successfully saved");
             return true;
         } catch (DynamoDbException e) {
             LOGGER.severe("Error saving RegistrationDetail: "+ e);

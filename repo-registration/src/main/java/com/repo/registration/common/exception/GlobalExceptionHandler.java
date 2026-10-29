@@ -11,27 +11,27 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.logging.Logger;
 
 @RestControllerAdvice
-public class GlobalExceptionAspect {
+public class GlobalExceptionHandler {
 
-    private final Logger LOGGER = Logger.getLogger(GlobalExceptionAspect.class.getName());
+    private final Logger LOGGER = Logger.getLogger(GlobalExceptionHandler.class.getName());
 
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<RegistrationResponse> exception(HttpClientErrorException ex){
-        LOGGER.info("GlobalExceptionAspect:exception, ex: "+ex);
+        LOGGER.severe("GlobalExceptionAspect:exception, ex: "+ex);
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(new RegistrationResponse("Repo registration failed: "+ex.getMessage()));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<RegistrationResponse> exception(MissingRequestHeaderException ex){
-        LOGGER.info("GlobalExceptionAspect:exception, ex: "+ex);
+        LOGGER.severe("GlobalExceptionAspect:exception, ex: "+ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new RegistrationResponse("Repo registration failed: "+ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RegistrationResponse> exception(Exception ex){
-        LOGGER.info("GlobalExceptionAspect:exception, ex: "+ex);
+        LOGGER.severe("GlobalExceptionAspect:exception, ex: "+ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new RegistrationResponse("Repo registration failed"));
     }
