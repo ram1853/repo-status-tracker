@@ -36,7 +36,7 @@ resource "aws_apigatewayv2_route" "register-repo" {
 
 resource "aws_apigatewayv2_route" "health-event" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /api/v1/event/ping"
+  route_key = "GET /api/v1/event/ping"
   target = "integrations/${aws_apigatewayv2_integration.event_lambda_integration.id}"
 }
 
