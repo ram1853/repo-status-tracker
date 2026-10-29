@@ -94,7 +94,7 @@ resource "aws_lambda_function" "repo-registrar" {
   function_name     = var.function_name
   role              = aws_iam_role.repo-registrar-role.arn
   timeout           = 10
-  memory_size       = 512
+  #memory_size       = 512
   package_type      = "Image"
   image_uri         = "545009866715.dkr.ecr.eu-north-1.amazonaws.com/repo-registration:${var.image_tag}"
   architectures     = ["x86_64"]
