@@ -102,6 +102,7 @@ resource "aws_lambda_function" "repo-registrar" {
     variables = {
       AWS_LWA_READINESS_CHECK_PATH = "/api/v1/ping"
       AWS_LWA_REMOVE_BASE_PATH     = "/dev"
+      AWS_REGION                   = "eu-north-1"
     }
   }
 }
