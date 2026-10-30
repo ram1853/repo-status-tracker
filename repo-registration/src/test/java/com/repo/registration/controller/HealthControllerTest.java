@@ -29,7 +29,7 @@ class HealthControllerTest {
                         .newInstance().scheme("http")
                         .host("localhost")
                         .port(8080)
-                        .path("/api/v1/ping").build().toUri())
+                        .path("/api/v1/registration/ping").build().toUri())
                 .retrieve().toEntity(String.class);
 
         //Assert
