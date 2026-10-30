@@ -1,0 +1,58 @@
+name: Build and Deploy to AWS
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: ["event-processing/**"]
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      IMAGE_TAG: ${{ github.sha }}
+      AWS_ACCOUNT_ID: 545009866715
+      AWS_REGION: eu-north-1
+    
+    defaults:
+        run:
+          working-directory: event-processing
+
+    steps:
+        - uses: actions/checkout@v4
+
+        - name: Build native binary
+          run: |
+           docker run --rm \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            ghcr.io/graalvm/graalvm-community:25 \
+            ./mvnw native:compile -Pnative
+        
+        - name: Prepare deployment artifact
+          run: |
+           mkdir -p lambda-package
+           cp target/event-processing lambda-package/event-processing
+           cp bootstrap lambda-package/bootstrap
+           cd lambda-package && chmod +x bootstrap && zip function.zip bootstrap event-processing
+
+        - name: upload deployment artifact to s3
+          run: aws s3 cp lambda-package/function.zip s3://repo-status-tracker-1853/lambda/event-processing-${IMAGE_TAG}.zip
+        
+        - name: Provision infra
+          run: |
+            docker run --rm \
+            -v "$(pwd)/infra:/workspace" \
+            -w /workspace \
+            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            hashicorp/terraform:latest init
+
+            docker run --rm \
+            -v "$(pwd)/infra:/workspace" \
+            -w /workspace \
+            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            hashicorp/terraform:latest apply -var="image_tag=${IMAGE_TAG}" -auto-approve
