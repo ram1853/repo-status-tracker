@@ -12,7 +12,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-      IMAGE_TAG: ${{ github.sha }}
+      ZIP_TAG: ${{ github.sha }}
       AWS_ACCOUNT_ID: 545009866715
       AWS_REGION: eu-north-1
     
@@ -39,7 +39,7 @@ jobs:
            cd lambda-package && chmod +x bootstrap && zip function.zip bootstrap event-processing
 
         - name: upload deployment artifact to s3
-          run: aws s3 cp lambda-package/function.zip s3://repo-status-tracker-1853/lambda/event-processing-${IMAGE_TAG}.zip
+          run: aws s3 cp lambda-package/function.zip s3://repo-status-tracker-1853/lambda/event-processing-${ZIP_TAG}.zip
         
         - name: Provision infra
           run: |
@@ -55,4 +55,4 @@ jobs:
             -w /workspace \
             -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
             -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-            hashicorp/terraform:latest apply -var="image_tag=${IMAGE_TAG}" -auto-approve
+            hashicorp/terraform:latest apply -var="zip_tag=${ZIP_TAG}" -auto-approve
