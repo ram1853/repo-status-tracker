@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ThreadControllerTest {
+class HealthControllerTest {
 
     @MockitoBean
     private DynamoDbEnhancedClient dynamoDbEnhancedClient;
@@ -22,7 +22,7 @@ class ThreadControllerTest {
     private RestClient restClient;
 
     @Test
-    void currentThread_shouldReturnAVirtualThreadInstance(){
+    void ping_shouldReturnOkResponse(){
         //Act
         ResponseEntity<String> threadResponse = restClient.get()
                 .uri(UriComponentsBuilder
@@ -33,7 +33,7 @@ class ThreadControllerTest {
                 .retrieve().toEntity(String.class);
 
         //Assert
-        assertThat(threadResponse.getBody().startsWith("VirtualThread"), is(true));
+        assertThat(threadResponse.getBody().equals("ok"), is(true));
     }
 
 }
