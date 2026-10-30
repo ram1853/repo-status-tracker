@@ -8,12 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.logging.Logger;
 
 @Service
 public class RegistrationServiceImpl implements IRegistrationService {
-
-    private final Logger LOGGER = Logger.getLogger(RegistrationServiceImpl.class.getName());
 
     private final IRegistrationRepository registrationRepository;
 
