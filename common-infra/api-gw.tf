@@ -16,13 +16,13 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 
 resource "aws_apigatewayv2_route" "health" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /api/v1/ping"
+  route_key = "GET /api/v1/registration/ping"
   target = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
 resource "aws_apigatewayv2_route" "register-repo" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /api/v1/registration"
+  route_key = "POST /api/v1/registration/create"
   target = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 

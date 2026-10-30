@@ -24,7 +24,7 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<RegistrationResponse> registerWebHookForRepo(@RequestBody RegistrationRequest registrationRequest, @RequestHeader String owner,
                                                                        @RequestHeader String repo, @RequestHeader("Authorization") String token){
         LOGGER.info("registerWebHookForRepo, registrationRequest: "+ registrationRequest
