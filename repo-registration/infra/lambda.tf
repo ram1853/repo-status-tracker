@@ -108,7 +108,7 @@ resource "aws_lambda_function" "repo-registrar" {
 
   environment {
     variables = {
-      AWS_LWA_READINESS_CHECK_PATH = "/api/v1/ping"
+      AWS_LWA_READINESS_CHECK_PATH = "/api/v1/registration/ping"
       AWS_LWA_REMOVE_BASE_PATH     = "/dev"
     }
   }
