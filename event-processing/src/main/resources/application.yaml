@@ -6,6 +6,12 @@ spring:
     virtual:
       enabled: true
 
+  mongodb:
+    uri: mongodb+srv://ramkumarrockysrini_db_user:xBhISE7GTx61C2Yj@repo-status-tracker.nhpslqj.mongodb.net/repository
+    database: repository
+
 server:
   servlet:
     context-path: /api
+  port: 8081
+
