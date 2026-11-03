@@ -52,6 +52,20 @@ resource "aws_iam_policy" "cloudwatch-policy" {
   })
 }
 
+resource "aws_iam_policy" "secrets-manager-policy" {
+  name = "event-processing-secrets-manager-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+        {
+            Action  = ["secretsmanager:GetSecretValue"]
+            Effect   = "Allow"
+            Resource = "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:repo-status-tracker-mongodb-connection-dFUPPe"
+        }
+    ]
+  })
+}
+
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -69,6 +83,11 @@ resource "aws_iam_role" "event-processing-role" {
 resource "aws_iam_role_policy_attachment" "attach-cloudwatch-policy" {
   role       = aws_iam_role.event-processing-role.name
   policy_arn = aws_iam_policy.cloudwatch-policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach-secrets-manager-policy" {
+  role       = aws_iam_role.event-processing-role.name
+  policy_arn = aws_iam_policy.secrets-manager-policy.arn
 }
 
 resource "aws_lambda_function" "event-processing" {
